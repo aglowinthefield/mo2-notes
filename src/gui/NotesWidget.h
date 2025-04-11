@@ -9,10 +9,12 @@ class NotesWidget final : public QWidget {
 
 public:
     explicit NotesWidget(QWidget* parent = nullptr);
+
     void setProfilePath(const QString& profilePath);
 
-    private slots:
-        void saveNotes();
+private slots:
+    void saveNotes();
+
     void onTextChanged();
 
 private:
