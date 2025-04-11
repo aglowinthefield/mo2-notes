@@ -49,9 +49,10 @@ QList<MOBase::PluginSetting> MO2Notes::settings() const
 
 bool MO2Notes::enabledByDefault() const { return true; }
 
-QWidget* MO2Notes::createWidget(IPanelInterface*, QWidget* parent)
+QWidget* MO2Notes::createWidget(IPanelInterface*, QWidget* parent, const QString& profilePath)
 {
     const auto widget = new NotesWidget(parent);
+    widget->setProfilePath(profilePath);
     return widget;
 }
 

@@ -8,36 +8,36 @@ class MO2Notes final : public IPluginPanel {
     Q_PLUGIN_METADATA(IID "org.tannin.MO2Notes" FILE "mo2notes.json")
 
 public:
-    inline static const QString NAME = QStringLiteral("MO2 Notes");
+    inline static const auto NAME = QStringLiteral("MO2 Notes");
 
     MO2Notes() = default;
 
     // IPlugin
 
-    QString name() const override;
+    [[nodiscard]] QString name() const override;
 
-    std::vector<std::shared_ptr<const MOBase::IPluginRequirement> > requirements() const override;
+    [[nodiscard]] std::vector<std::shared_ptr<const MOBase::IPluginRequirement> > requirements() const override;
 
-    QString author() const override;
+    [[nodiscard]] QString author() const override;
 
-    QString description() const override;
+    [[nodiscard]] QString description() const override;
 
-    MOBase::VersionInfo version() const override;
+    [[nodiscard]] MOBase::VersionInfo version() const override;
 
-    QList<MOBase::PluginSetting> settings() const override;
+    [[nodiscard]] QList<MOBase::PluginSetting> settings() const override;
 
-    bool enabledByDefault() const override;
+    [[nodiscard]] bool enabledByDefault() const override;
 
     // IPluginPanel
 
     bool initPlugin(MOBase::IOrganizer* organizer) override;
 
-    QWidget* createWidget(IPanelInterface* panelInterface, QWidget* parent) override;
+    QWidget* createWidget(IPanelInterface* panelInterface, QWidget* parent, const QString& profilePath) override;
 
-    QString label() const override;
+    [[nodiscard]] QString label() const override;
 
-    Position position() const override;
+    [[nodiscard]] Position position() const override;
 
 private:
-    MOBase::IOrganizer* m_Organizer;
+    MOBase::IOrganizer* m_Organizer{};
 };

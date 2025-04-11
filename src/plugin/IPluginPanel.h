@@ -34,11 +34,11 @@ class IPluginPanel : public QObject, public MOBase::IPlugin
 
     virtual bool initPlugin(MOBase::IOrganizer* organizer) = 0;
 
-    virtual QWidget* createWidget(IPanelInterface* callbacks, QWidget* parent) = 0;
+    virtual QWidget* createWidget(IPanelInterface* callbacks, QWidget* parent, const QString& profilePath) = 0;
 
-    virtual QString label() const = 0;
+    [[nodiscard]] virtual QString label() const = 0;
 
-    virtual Position position() const = 0;
+    [[nodiscard]] virtual Position position() const = 0;
 };
 
 Q_DECLARE_INTERFACE(IPluginPanel, "com.tannin.ModOrganizer.Plugin/2.0")

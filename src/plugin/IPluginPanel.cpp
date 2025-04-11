@@ -44,7 +44,8 @@ bool IPluginPanel::init(MOBase::IOrganizer* organizer)
         }
 
         const auto intfc    = new MOPanelInterface(organizer, mainWindow);
-        const auto widget   = this->createWidget(intfc, tabWidget);
+        const auto profile  = organizer->profile()->absolutePath();
+        const auto widget   = this->createWidget(intfc, tabWidget, profile);
         const auto label    = this->label();
         const auto position = this->position();
 
