@@ -4,6 +4,9 @@ add_library(mo2_notes SHARED)
 set_property(TARGET mo2_notes PROPERTY CXX_STANDARD 20)
 set(CMAKE_GENERATOR_PLATFORM x64)
 
+set(CMAKE_AUTORCC ON) # Will make the compiler read QRC file and skip the JS stuff.
+
+
 FetchContent_Declare(
         QMarkdownTextEdit
         GIT_REPOSITORY https://github.com/pbek/QMarkdownTextEdit.git
@@ -34,6 +37,7 @@ mo2_configure_plugin(
         mo2_notes
         WARNINGS OFF
         PRIVATE_DEPENDS
-            boost uibase
+        boost uibase
+        Qt::WebEngineWidgets
 )
 mo2_install_target(mo2_notes)
