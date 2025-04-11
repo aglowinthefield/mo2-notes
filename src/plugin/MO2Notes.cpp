@@ -1,15 +1,19 @@
 #include "MO2Notes.h"
 #include "gui/NotesWidget.h"
 
-// #include "BSPluginList/PluginsWidget.h"
-// #include "Settings.h"
-
 using namespace Qt::Literals::StringLiterals;
 
 bool MO2Notes::initPlugin(MOBase::IOrganizer* organizer)
 {
     m_Organizer = organizer;
-    //  Settings::init(organizer);
+    // m_Organizer->onUserInterfaceInitialized([this](QMainWindow*) {
+    //     m_Organizer->onProfileChanged([this](MOBase::IProfile*, const MOBase::IProfile* newProfile) {
+    //         if (m_NotesWidget) {
+    //             const auto newPath = newProfile->absolutePath();
+    //             m_NotesWidget->setProfilePath(newPath);
+    //         }
+    //     });
+    // });
     return true;
 }
 
@@ -34,26 +38,16 @@ MOBase::VersionInfo MO2Notes::version() const
 
 QList<MOBase::PluginSetting> MO2Notes::settings() const
 {
-    return {
-        //      {u"enable_sort_button"_s, u"Enable the Sort button in the Plugins panel"_s, true},
-        //      {u"external_change_warning"_s,
-        //       u"Warn if load order changes while running an executable"_s, true},
-        //      {u"loot_show_dirty"_s,
-        //       u"LOOT: Show information about plugins that can be cleaned"_s, true},
-        //      {u"loot_show_messages"_s,
-        //       u"LOOT: Show general information and warning messages"_s, true},
-        //      {u"loot_show_problems"_s,
-        //       u"LOOT: Show information about incompatibilities and missing masters"_s, true},
-    };
+    return {};
 }
 
 bool MO2Notes::enabledByDefault() const { return true; }
 
 QWidget* MO2Notes::createWidget(IPanelInterface*, QWidget* parent, const QString& profilePath)
 {
-    const auto widget = new NotesWidget(parent);
-    widget->setProfilePath(profilePath);
-    return widget;
+    m_NotesWidget = new NotesWidget(parent);
+    m_NotesWidget->setProfilePath(profilePath);
+    return m_NotesWidget;
 }
 
 QString MO2Notes::label() const { return tr("Notes"); }

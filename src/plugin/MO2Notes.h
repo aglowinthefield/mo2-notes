@@ -1,6 +1,7 @@
 #pragma once
 
 #include "IPluginPanel.h"
+#include "gui/NotesWidget.h"
 
 class MO2Notes final : public IPluginPanel {
     Q_OBJECT
@@ -40,4 +41,5 @@ public:
 
 private:
     MOBase::IOrganizer* m_Organizer{};
+    NotesWidget* m_NotesWidget{};
 };
