@@ -1,11 +1,14 @@
 #include "NotesWidget.h"
-#include <QDir>
-#include <QDebug>
 #include <QApplication>
+#include <QDebug>
+#include <QDir>
+
 #include <QHBoxLayout>
-#include <QWebEngineScript>
 #include <QWebEngineProfile>
+#include <QWebEngineScript>
 #include <QWebEngineSettings>
+#include <QWebEngineView>
+#include "NotesWebPage.h"
 
 NotesWidget::NotesWidget(QWidget* parent)
     : QWidget(parent)
@@ -51,10 +54,16 @@ NotesWidget::NotesWidget(QWidget* parent)
 
 void NotesWidget::initWebView() const
 {
+    // Create and set custom page
+    auto customPage = new NotesWebPage(m_webView);
+    m_webView->setPage(customPage);
+
     // Enable basic settings
     m_webView->settings()->setAttribute(QWebEngineSettings::JavascriptEnabled, true);
     m_webView->settings()->setAttribute(QWebEngineSettings::LocalContentCanAccessFileUrls, true);
     m_webView->settings()->setAttribute(QWebEngineSettings::LocalContentCanAccessRemoteUrls, false);
+
+    // m_webView->page()->setUrlRequestInterceptor(new UrlRequestInterceptor());
 
     // Load the initial HTML with the markdown renderer - HTML string will be provided separately
     m_webView->setHtml(R"(<!DOCTYPE html>
@@ -76,19 +85,19 @@ void NotesWidget::initWebView() const
         xhtml: false            // Don't use XHTML closing tags
     });
 
-    function updateContent(markdown) {
-        document.getElementById('content').innerHTML = marked.parse(markdown);
+function updateContent(markdown) {
+    document.getElementById('content').innerHTML = marked.parse(markdown);
 
-        // Add click handler to make links open in external browser
-        const links = document.getElementsByTagName('a');
-        for (let i = 0; i < links.length; i++) {
-            links[i].addEventListener('click', function(e) {
-                e.preventDefault();
-                window.location.href = 'about:blank#' + this.getAttribute('href');
-            });
-        }
+    // Add click handler to make links open in external browser
+    const links = document.getElementsByTagName('a');
+    for (let i = 0; i < links.length; i++) {
+        links[i].addEventListener('click', function(e) {
+            e.preventDefault();
+            // This will trigger navigation that our interceptor can catch
+            window.location.href = this.href;
+        });
     }
-    </script>
+}    </script>
     <style>
         body {
             font-family: system-ui, -apple-system, sans-serif;
