@@ -1,12 +1,20 @@
 cmake_minimum_required(VERSION 3.30)
+include(FetchContent)
 add_library(mo2_notes SHARED)
 set_property(TARGET mo2_notes PROPERTY CXX_STANDARD 20)
 set(CMAKE_GENERATOR_PLATFORM x64)
 
+FetchContent_Declare(
+        QMarkdownTextEdit
+        GIT_REPOSITORY https://github.com/pbek/QMarkdownTextEdit.git
+        GIT_TAG main
+)
+FetchContent_MakeAvailable(QMarkdownTextEdit)
+
 target_include_directories(
         mo2_notes
         PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}
-#        PRIVATE ${CMAKE_CURRENT_BINARY_DIR}/include
+        PRIVATE ${qmarkdowntextedit_SOURCE_DIR}
 )
 
 if (MSVC)
@@ -21,7 +29,7 @@ if (MSVC)
     )
 endif ()
 
-#target_link_libraries(mo2_notes PRIVATE pugixml nlohmann_json::nlohmann_json)
+target_link_libraries(mo2_notes PRIVATE qmarkdowntextedit)
 mo2_configure_plugin(
         mo2_notes
         WARNINGS OFF

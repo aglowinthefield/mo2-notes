@@ -1,0 +1,16 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Debug MO2 Notes Plugin",
+      "type": "lldb",
+      "request": "launch",
+      "program": "D:\\Modding\\MO2\\ModOrganizer.exe",
+      "args": [],
+      "stopAtEntry": false,
+      "cwd": "D:\\Modding\\MO2",
+      "environment": [],
+      "preLaunchTask": "build"
+    }
+  ]
+} 

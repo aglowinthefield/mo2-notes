@@ -1,5 +1,4 @@
-#ifndef MOPANELINTERFACE_H
-#define MOPANELINTERFACE_H
+#pragma once
 
 #include "IPanelInterface.h"
 
@@ -57,4 +56,3 @@ private:
     SignalSelectedOriginsChanged m_SelectedOriginsChanged;
 };
 
-#endif  // MOPANELINTERFACE_H

@@ -1,9 +1,8 @@
-#ifndef IPANELINTERFACE_H
-#define IPANELINTERFACE_H
+#pragma once
 
+#include <functional>
 #include <QList>
 #include <QString>
-#include <functional>
 
 class IPanelInterface
 {
@@ -27,4 +26,3 @@ public:
     virtual void setPluginState(const QString& name, bool enable) = 0;
 };
 
-#endif  // IPANELINTERFACE_H

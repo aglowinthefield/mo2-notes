@@ -1,5 +1,4 @@
-#ifndef IPLUGINPANEL_H
-#define IPLUGINPANEL_H
+#pragma once
 
 #include "IPanelInterface.h"
 
@@ -44,4 +43,3 @@ class IPluginPanel : public QObject, public MOBase::IPlugin
 
 Q_DECLARE_INTERFACE(IPluginPanel, "com.tannin.ModOrganizer.Plugin/2.0")
 
-#endif  // IPLUGINPANEL_H
