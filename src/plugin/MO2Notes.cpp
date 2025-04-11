@@ -15,11 +15,12 @@ bool MO2Notes::initPlugin(MOBase::IOrganizer* organizer)
 
 QString MO2Notes::name() const { return NAME; }
 
-std::vector<std::shared_ptr<const MOBase::IPluginRequirement>> MO2Notes::requirements() const
+std::vector<std::shared_ptr<const MOBase::IPluginRequirement> > MO2Notes::requirements() const
 {
     return { Requirements::gameDependency({ u"Oblivion"_s, u"Fallout 3"_s, u"New Vegas"_s, u"Skyrim"_s, u"Enderal"_s,
-        u"Fallout 4"_s, u"Skyrim Special Edition"_s, u"Enderal Special Edition"_s, u"Skyrim VR"_s, u"Fallout 4 VR"_s,
-        u"Starfield"_s }) };
+                                            u"Fallout 4"_s, u"Skyrim Special Edition"_s, u"Enderal Special Edition"_s,
+                                            u"Skyrim VR"_s, u"Fallout 4 VR"_s,
+                                            u"Starfield"_s }) };
 }
 
 QString MO2Notes::author() const { return u"aglowinthefield"_s; }
