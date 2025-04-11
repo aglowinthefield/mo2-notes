@@ -1,0 +1,4 @@
+﻿vsbuild/
+.idea/
+cmake-build-debug/
+install/
