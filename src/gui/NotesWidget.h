@@ -13,6 +13,8 @@ class NotesWidget final : public QWidget {
 public:
     explicit NotesWidget(QWidget* parent = nullptr);
 
+    static void createDefaultMarkdownStyle(const QString& path);
+
     void setProfilePath(const QString& profilePath);
 
     void reloadStyles() const;
@@ -25,6 +27,8 @@ private slots:
     void toggleViewMode();
 
     void updatePreview() const;
+
+    void setupMarkdownHighlighter() const;
 
 private:
     void initWebView() const;
