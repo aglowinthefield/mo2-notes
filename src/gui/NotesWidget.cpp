@@ -14,6 +14,19 @@
 
 #include <qstyle.h>
 
+namespace {
+// Gruvbox muted colors
+constexpr auto BASE01_DARKER_BG = "#32302f"; // Darker muted background
+constexpr auto BASE04_LIGHT     = "#7c6f64"; // Muted gray
+constexpr auto BASE05_DEFAULT   = "#d5c4a1"; // Muted default text
+constexpr auto BASE06_LIGHTER   = "#ebdbb2"; // Muted lighter text
+constexpr auto BASE0B_GREEN     = "#98971a"; // Muted green
+constexpr auto BASE0D_BLUE      = "#458588"; // Muted blue
+constexpr auto BASE0E_PURPLE    = "#b16286"; // Muted purple
+constexpr auto BASE0C_AQUA      = "#689d6a"; // Muted aqua
+constexpr auto FONT_MONO        = "monospace"; // Monospace font
+}
+
 NotesWidget::NotesWidget(QWidget* parent)
     : QWidget(parent)
       , m_stackedWidget(new QStackedWidget(this))
@@ -194,7 +207,7 @@ void NotesWidget::setupMarkdownHighlighter() const
         const QJsonDocument doc = QJsonDocument::fromJson(styleFile.readAll());
         styleFile.close();
 
-        if (doc.isObject() && false) {
+        if (doc.isObject()) {
             const QJsonObject styleObj = doc.object();
 
             // Parse each style element from JSON
@@ -227,7 +240,7 @@ void NotesWidget::setupMarkdownHighlighter() const
                     if (formatObj.contains("fontFamily"))
                         format.setFontFamilies({ formatObj["fontFamily"].toString() });
 
-                    formats[static_cast<MarkdownHighlighter::HighlighterState>(stateValue)] = format;
+                    MarkdownHighlighter::setTextFormat(static_cast<MarkdownHighlighter::HighlighterState>(stateValue), format);
                 }
             }
         }
@@ -239,62 +252,55 @@ void NotesWidget::setupMarkdownHighlighter() const
     // If no custom styles were loaded, use defaults
     if (formats.isEmpty()) {
         // Basic text format
+        // Set default formats individually if no custom styles exist
         QTextCharFormat normalFormat;
-        normalFormat.setForeground(QColor("#C7CCD1")); // base05 - default text
-        formats[MarkdownHighlighter::NoState] = normalFormat;
+        normalFormat.setForeground(QColor(BASE05_DEFAULT));
+        MarkdownHighlighter::setTextFormat(MarkdownHighlighter::NoState, normalFormat);
 
-        // Headers
         QTextCharFormat h1Format;
-        h1Format.setForeground(QColor("#95C7AE")); // base0B - green
+        h1Format.setForeground(QColor(BASE0C_AQUA));
         h1Format.setFontWeight(QFont::Bold);
         h1Format.setFontPointSize(24);
-        formats[MarkdownHighlighter::H1] = h1Format;
+        MarkdownHighlighter::setTextFormat(MarkdownHighlighter::H1, h1Format);
 
         QTextCharFormat h2Format;
-        h2Format.setForeground(QColor("#95C7AE")); // base0B - green
+        h2Format.setForeground(QColor(BASE0C_AQUA));
         h2Format.setFontWeight(QFont::Bold);
         h2Format.setFontPointSize(20);
-        formats[MarkdownHighlighter::H2] = h2Format;
+        MarkdownHighlighter::setTextFormat(MarkdownHighlighter::H2, h2Format);
 
         QTextCharFormat h3Format;
-        h3Format.setForeground(QColor("#95C7AE")); // base0B - green
+        h3Format.setForeground(QColor(BASE0C_AQUA));
         h3Format.setFontWeight(QFont::Bold);
         h3Format.setFontPointSize(16);
-        formats[MarkdownHighlighter::H3] = h3Format;
+        MarkdownHighlighter::setTextFormat(MarkdownHighlighter::H3, h3Format);
 
-        // Emphasis
         QTextCharFormat emphasisFormat;
-        emphasisFormat.setForeground(QColor("#ADB3BA")); // base04 - light gray
+        emphasisFormat.setForeground(QColor(BASE04_LIGHT));
         emphasisFormat.setFontItalic(true);
-        formats[MarkdownHighlighter::Italic] = emphasisFormat;
+        MarkdownHighlighter::setTextFormat(MarkdownHighlighter::Italic, emphasisFormat);
 
-        // Strong
         QTextCharFormat strongFormat;
-        strongFormat.setForeground(QColor("#DFE2E5")); // base06 - lighter gray
+        strongFormat.setForeground(QColor(BASE06_LIGHTER));
         strongFormat.setFontWeight(QFont::Bold);
-        formats[MarkdownHighlighter::Bold] = strongFormat;
+        MarkdownHighlighter::setTextFormat(MarkdownHighlighter::Bold, strongFormat);
 
-        // Code formats
-        QTextCharFormat codeFormat;
-        codeFormat.setForeground(QColor("#C795AE")); // base0E - purple
-        codeFormat.setFontFamilies({ "Consolas" });
-        formats[MarkdownHighlighter::InlineCodeBlock] = codeFormat;
-
-        QTextCharFormat codeBlockFormat;
-        codeBlockFormat.setForeground(QColor("#C795AE")); // base0E - purple
-        codeBlockFormat.setBackground(QColor("#393F45")); // base01 - darker background
-        codeBlockFormat.setFontFamilies({ "Consolas" });
-        formats[MarkdownHighlighter::CodeBlock] = codeBlockFormat;
-
-        // Links
         QTextCharFormat linkFormat;
-        linkFormat.setForeground(QColor("#AE95C7")); // base0D - blue
+        linkFormat.setForeground(QColor(BASE0D_BLUE));
         linkFormat.setFontUnderline(true);
-        formats[MarkdownHighlighter::Link] = linkFormat;
+        MarkdownHighlighter::setTextFormat(MarkdownHighlighter::Link, linkFormat);
+
+        QTextCharFormat checkboxUncheckedFormat;
+        checkboxUncheckedFormat.setForeground(QColor(BASE04_LIGHT));
+        checkboxUncheckedFormat.setFontWeight(QFont::Bold);
+        MarkdownHighlighter::setTextFormat(MarkdownHighlighter::CheckBoxUnChecked, checkboxUncheckedFormat);
+
+        QTextCharFormat checkboxCheckedFormat;
+        checkboxCheckedFormat.setForeground(QColor(BASE0E_PURPLE));
+        checkboxCheckedFormat.setFontWeight(QFont::Bold);
+        MarkdownHighlighter::setTextFormat(MarkdownHighlighter::CheckBoxChecked, checkboxCheckedFormat);
     }
 
-    // Apply the formats and force refresh
-    MarkdownHighlighter::setTextFormats(formats);
     highlighter->rehighlight();
 }
 
@@ -303,36 +309,63 @@ void NotesWidget::createDefaultMarkdownStyle(const QString& path)
     if (QFile file(path); file.open(QIODevice::WriteOnly)) {
         QJsonObject styleObj;
 
+        // Basic text
+        QJsonObject normal;
+        normal["foreground"] = BASE05_DEFAULT;
+        styleObj["NoState"]  = normal;
+
         // Headers
         QJsonObject h1;
-        h1["foreground"] = "#0077CC";
+        h1["foreground"] = BASE0B_GREEN;
         h1["bold"]       = true;
         h1["fontSize"]   = 24;
         styleObj["H1"]   = h1;
 
         QJsonObject h2;
-        h2["foreground"] = "#0077CC";
+        h2["foreground"] = BASE0B_GREEN;
         h2["bold"]       = true;
         h2["fontSize"]   = 20;
         styleObj["H2"]   = h2;
 
-        // Code
-        QJsonObject code;
-        code["foreground"]          = "#D14";
-        code["fontFamily"]          = "Consolas";
-        styleObj["InlineCodeBlock"] = code;
+        QJsonObject h3;
+        h3["foreground"] = BASE0B_GREEN;
+        h3["bold"]       = true;
+        h3["fontSize"]   = 16;
+        styleObj["H3"]   = h3;
 
-        QJsonObject codeBlock;
-        codeBlock["foreground"] = "#333333";
-        codeBlock["background"] = "#F5F5F5";
-        codeBlock["fontFamily"] = "Consolas";
-        styleObj["CodeBlock"]   = codeBlock;
+        // Emphasis
+        QJsonObject italic;
+        italic["foreground"] = BASE04_LIGHT;
+        italic["italic"]     = true;
+        styleObj["Italic"]   = italic;
+
+        // Strong
+        QJsonObject bold;
+        bold["foreground"] = BASE06_LIGHTER;
+        bold["bold"]       = true;
+        styleObj["Bold"]   = bold;
+
+        // Code
+        QJsonObject inlineCode;
+        inlineCode["foreground"]    = BASE0E_PURPLE;
+        inlineCode["fontFamily"]    = FONT_MONO;
+        styleObj["InlineCodeBlock"] = inlineCode;
 
         // Links
         QJsonObject link;
-        link["foreground"] = "#0077CC";
+        link["foreground"] = BASE0D_BLUE;
         link["underline"]  = true;
         styleObj["Link"]   = link;
+
+        QJsonObject checkboxUnchecked;
+        checkboxUnchecked["foreground"] = BASE04_LIGHT;
+        checkboxUnchecked["bold"] = true;
+        styleObj["CheckBoxUnChecked"] = checkboxUnchecked;
+
+        QJsonObject checkboxChecked;
+        checkboxChecked["foreground"] = BASE0E_PURPLE; // Changed to purple
+        checkboxChecked["bold"] = true;
+        styleObj["CheckBoxChecked"] = checkboxChecked;
 
         // Write the JSON to file
         const QJsonDocument doc(styleObj);
