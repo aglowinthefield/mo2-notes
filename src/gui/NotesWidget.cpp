@@ -55,7 +55,7 @@ NotesWidget::NotesWidget(QWidget* parent)
 void NotesWidget::initWebView() const
 {
     // Create and set custom page
-    auto customPage = new NotesWebPage(m_webView);
+    const auto customPage = new NotesWebPage(m_webView);
     m_webView->setPage(customPage);
 
     // Enable basic settings
@@ -63,10 +63,31 @@ void NotesWidget::initWebView() const
     m_webView->settings()->setAttribute(QWebEngineSettings::LocalContentCanAccessFileUrls, true);
     m_webView->settings()->setAttribute(QWebEngineSettings::LocalContentCanAccessRemoteUrls, false);
 
+    // Load the stylesheet
+    QString styleSheet;
+    QFile styleFile(":/resources/notes_style.css");
+    if (styleFile.open(QIODevice::ReadOnly | QIODevice::Text)) {
+        QTextStream stream(&styleFile);
+        styleSheet = stream.readAll();
+        styleFile.close();
+    }
+
+    // For external file support, also check profile directory
+    if (!m_profilePath.isEmpty()) {
+        const QString customCssPath = m_profilePath + "/notes_style.css";
+        QFile customFile(customCssPath);
+        if (customFile.exists() && customFile.open(QIODevice::ReadOnly | QIODevice::Text)) {
+            QTextStream stream(&customFile);
+            styleSheet = stream.readAll();
+            customFile.close();
+            qDebug() << "Using custom stylesheet from profile directory";
+        }
+    }
+
     // m_webView->page()->setUrlRequestInterceptor(new UrlRequestInterceptor());
 
     // Load the initial HTML with the markdown renderer - HTML string will be provided separately
-    m_webView->setHtml(R"(<!DOCTYPE html>
+    m_webView->setHtml(QString(R"(<!DOCTYPE html>
 <html>
 <head>
     <meta charset="utf-8">
@@ -99,109 +120,34 @@ function updateContent(markdown) {
     }
 }    </script>
     <style>
-        body {
-            font-family: system-ui, -apple-system, sans-serif;
-            line-height: 1.5;
-            padding: 0 20px;
-            max-width: 900px;
-            margin: 0 auto;
-        }
-        pre {
-            background-color: #f0f0f0;
-            padding: 10px;
-            border-radius: 5px;
-            overflow: auto;
-        }
-        code {
-            background-color: #f0f0f0;
-            padding: 2px 4px;
-            border-radius: 3px;
-            font-family: monospace;
-        }
-        blockquote {
-            border-left: 4px solid #ccc;
-            margin-left: 0;
-            padding-left: 15px;
-            color: #777;
-        }
-        img {
-            max-width: 100%;
-        }
-        h1, h2, h3 {
-            border-bottom: 1px solid #eee;
-            padding-bottom: 0.3em;
-        }
-        table {
-            border-collapse: collapse;
-            width: 100%;
-            margin: 1em 0;
-        }
-        table th, table td {
-            border: 1px solid #ddd;
-            padding: 8px;
-        }
-        table tr:nth-child(even) {
-            background-color: #f8f8f8;
-        }
-        table th {
-            padding-top: 12px;
-            padding-bottom: 12px;
-            text-align: left;
-            background-color: #f0f0f0;
-        }
-        a {
-            color: #0366d6;
-            text-decoration: none;
-        }
-        a:hover {
-            text-decoration: underline;
-        }
-        /* Task lists */
-        ul.contains-task-list {
-            list-style-type: none;
-            padding-left: 0;
-        }
-        ul.contains-task-list ul.contains-task-list {
-            padding-left: 20px;
-        }
-        .task-list-item-checkbox {
-            margin-right: 8px;
-        }
-        /* Media-specific styles */
-        @media (prefers-color-scheme: dark) {
-            body {
-                background-color: #2d2d2d;
-                color: #e0e0e0;
-            }
-            pre, code {
-                background-color: #3c3c3c;
-            }
-            blockquote {
-                border-left-color: #555;
-                color: #aaa;
-            }
-            a {
-                color: #6ea8fe;
-            }
-            h1, h2, h3 {
-                border-bottom-color: #444;
-            }
-            table th, table td {
-                border-color: #555;
-            }
-            table tr:nth-child(even) {
-                background-color: #333;
-            }
-            table th {
-                background-color: #3c3c3c;
-            }
-        }
+    %1
     </style>
 </head>
 <body>
     <div id="content"></div>
 </body>
-</html>)");
+</html>)").arg(styleSheet));
+}
+
+void NotesWidget::applyEditorStyles() const
+{
+    // Default styles
+    QString styleSheet = "QMarkdownTextEdit { font-family: monospace; font-size: 10pt; }";
+
+    // Check for custom editor styles in profile directory
+    if (!m_profilePath.isEmpty()) {
+        QString customCssPath = m_profilePath + "/editor_style.css";
+        QFile customFile(customCssPath);
+        if (customFile.exists() && customFile.open(QIODevice::ReadOnly | QIODevice::Text)) {
+            QTextStream stream(&customFile);
+            styleSheet = stream.readAll();
+            customFile.close();
+            qDebug() << "Using custom editor stylesheet from profile directory";
+        }
+    }
+
+    // Apply the stylesheet to the editor
+    m_textEdit->setStyleSheet(styleSheet);
 }
 
 void NotesWidget::toggleViewMode()
@@ -242,6 +188,24 @@ void NotesWidget::setProfilePath(const QString& profilePath)
         m_textEdit->setPlainText(in.readAll());
         file.close();
         m_isDirty = false;
+    }
+
+    initWebView(); // This loads preview styles
+    applyEditorStyles(); // This loads editor styles
+
+}
+
+void NotesWidget::reloadStyles() const
+{
+    // Reload preview stylesheet
+    initWebView();
+
+    // Reload editor stylesheet
+    applyEditorStyles();
+
+    // Update preview if needed
+    if (!m_isEditMode) {
+        updatePreview();
     }
 }
 

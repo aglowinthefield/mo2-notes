@@ -1,0 +1,97 @@
+body {
+    font-family: system-ui, -apple-system, sans-serif;
+    line-height: 1.5;
+    padding: 0 20px;
+    max-width: 900px;
+    margin: 0 auto;
+}
+pre {
+    background-color: #f0f0f0;
+    padding: 10px;
+    border-radius: 5px;
+    overflow: auto;
+}
+code {
+    background-color: #f0f0f0;
+    padding: 2px 4px;
+    border-radius: 3px;
+    font-family: monospace;
+}
+blockquote {
+    border-left: 4px solid #ccc;
+    margin-left: 0;
+    padding-left: 15px;
+    color: #777;
+}
+img {
+    max-width: 100%;
+}
+h1, h2, h3 {
+    border-bottom: 1px solid #eee;
+    padding-bottom: 0.3em;
+}
+table {
+    border-collapse: collapse;
+    width: 100%;
+    margin: 1em 0;
+}
+table th, table td {
+    border: 1px solid #ddd;
+    padding: 8px;
+}
+table tr:nth-child(even) {
+    background-color: #f8f8f8;
+}
+table th {
+    padding-top: 12px;
+    padding-bottom: 12px;
+    text-align: left;
+    background-color: #f0f0f0;
+}
+a {
+    color: #0366d6;
+    text-decoration: none;
+}
+a:hover {
+    text-decoration: underline;
+}
+/* Task lists */
+ul.contains-task-list {
+    list-style-type: none;
+    padding-left: 0;
+}
+ul.contains-task-list ul.contains-task-list {
+    padding-left: 20px;
+}
+.task-list-item-checkbox {
+    margin-right: 8px;
+}
+/* Media-specific styles */
+@media (prefers-color-scheme: dark) {
+    body {
+        background-color: #2d2d2d;
+        color: #e0e0e0;
+    }
+    pre, code {
+        background-color: #3c3c3c;
+    }
+    blockquote {
+        border-left-color: #555;
+        color: #aaa;
+    }
+    a {
+        color: #6ea8fe;
+    }
+    h1, h2, h3 {
+        border-bottom-color: #444;
+    }
+    table th, table td {
+        border-color: #555;
+    }
+    table tr:nth-child(even) {
+        background-color: #333;
+    }
+    table th {
+        background-color: #3c3c3c;
+    }
+}

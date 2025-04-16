@@ -2,5 +2,6 @@
 <RCC version="1.0">
     <qresource prefix="/">
         <file>resources/marked.min.js</file>
+        <file>resources/notes_style.css</file>
     </qresource>
 </RCC>

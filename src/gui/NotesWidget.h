@@ -15,6 +15,8 @@ public:
 
     void setProfilePath(const QString& profilePath);
 
+    void reloadStyles() const;
+
 private slots:
     void saveNotes();
 
@@ -26,6 +28,8 @@ private slots:
 
 private:
     void initWebView() const;
+
+    void applyEditorStyles() const;
 
     QStackedWidget* m_stackedWidget;
     QMarkdownTextEdit* m_textEdit;
