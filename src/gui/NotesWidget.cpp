@@ -1,4 +1,7 @@
 #include "NotesWidget.h"
+
+#include "DefaultContent.h"
+
 #include <QApplication>
 #include <QDebug>
 #include <QDir>
@@ -394,6 +397,16 @@ void NotesWidget::setProfilePath(const QString& profilePath)
         m_textEdit->setPlainText(in.readAll());
         file.close();
         m_isDirty = false;
+    } else {
+        // Set default welcome content if no file exists
+        m_textEdit->setPlainText(DefaultContent::WELCOME_MARKDOWN);
+        // Save the default content
+        if (file.open(QIODevice::WriteOnly | QIODevice::Text)) {
+            QTextStream out(&file);
+            out << DefaultContent::WELCOME_MARKDOWN;
+            file.close();
+        }
+
     }
 
     // Apply styles to components
