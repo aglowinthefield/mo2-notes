@@ -18,8 +18,9 @@ jobs:
       - name: Build
         uses: ModOrganizer2/build-with-mob-action@master
         with:
-          mo2-third-parties: 7z zlib
+          mo2-third-parties: 7z zlib boost
           mo2-dependencies: cmake_common uibase lz4
+          qt-modules: qtpositioning qtwebchannel qtwebengine
 
       - name: Install
         run: cmake --install ${{env.SOURCE_ROOT}}/vsbuild --config ${{env.BUILD_TYPE}} --prefix ${{env.SOURCE_ROOT}}/install
