@@ -6,13 +6,18 @@ set(CMAKE_GENERATOR_PLATFORM x64)
 
 set(CMAKE_AUTORCC ON) # Will make the compiler read QRC file and skip the JS stuff.
 
-
+set(BUILD_QMARKDOWNTEXTEDIT_EXECUTABLES OFF CACHE BOOL "Build executables" FORCE)
 FetchContent_Declare(
         QMarkdownTextEdit
         GIT_REPOSITORY https://github.com/pbek/QMarkdownTextEdit.git
         GIT_TAG main
 )
 FetchContent_MakeAvailable(QMarkdownTextEdit)
+
+set_source_files_properties(
+        ${CMAKE_CURRENT_SOURCE_DIR}/resources/marked.min.js
+        PROPERTIES HEADER_FILE_ONLY TRUE
+)
 
 target_include_directories(
         mo2_notes
@@ -32,7 +37,7 @@ if (MSVC)
     )
 endif ()
 
-target_link_libraries(mo2_notes PRIVATE qmarkdowntextedit)
+target_link_libraries(mo2_notes PUBLIC qmarkdowntextedit)
 mo2_configure_plugin(
         mo2_notes
         WARNINGS OFF
